@@ -22,6 +22,7 @@ matrix:
       ghc: "8.8.3"
 
   allow_failures:
+    - env: BUILD=cabal
     - env: BUILD=stack ARGS="--resolver nightly --system-ghc"
     - env: BUILD=werror ARGS="--resolver lts-15.6 --system-ghc"
 
