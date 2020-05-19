@@ -12,6 +12,20 @@ packages:
   original:
     hackage: numhask-prelude-0.3.3
 - completed:
+    cabal-file:
+      size: 2578
+      sha256: e7970aa91fe2ff0dcf2ffcc818bf7637d58bd36b84a01f79470e5fb52a4a27cf
+    name: box
+    version: 0.4.0
+    git: https://github.com/tonyday567/box
+    pantry-tree:
+      size: 1607
+      sha256: 2fe2459719ba780791a4864ec32cbc45bf5f5990cd4e7779fa87e5c9a54cb2fb
+    commit: 8379b7efd7292878fd51b98128eff9313c557a61
+  original:
+    git: https://github.com/tonyday567/box
+    commit: 8379b7efd7292878fd51b98128eff9313c557a61
+- completed:
     hackage: text-format-0.3.2@sha256:ea4e0cfd66e5a0224cbff2753eb160e71c9e383e86f293db77adeba5706bab94,1766
     pantry-tree:
       size: 1029
