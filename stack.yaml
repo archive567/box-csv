@@ -2,10 +2,11 @@ resolver: lts-15.6
 
 packages:
   - .
+  - ../box
 
 extra-deps:
   - numhask-prelude-0.3.3
-  - box-0.2.0
+  # - box-0.2.0
   - text-format-0.3.2
 
 allow-newer: true

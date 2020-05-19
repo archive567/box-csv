@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -14,8 +13,8 @@ module Data.Csv
     defaultCsvConfig,
     file,
     Header(..),
-    fileLines,
     rowEmitter,
+    rowCommitter,
     runCsv,
     sep,
     field,
@@ -31,7 +30,6 @@ import Control.Lens
 import qualified Data.Attoparsec.Text as A
 import Data.Generics.Labels ()
 import qualified Data.Text as Text
-import qualified Data.Text.IO as Text
 import NumHask.Prelude
 import Data.Scientific
 
@@ -72,17 +70,14 @@ file cfg =
 -- | does the csv have a header row?
 data Header = HasHeader | NoHeader deriving (Show, Eq)
 
--- | Emits a line of Text from a file.
-fileLines :: Handle -> Emitter IO Text
-fileLines h = Emitter $ do
-  l :: (Either IOException Text) <- try (Text.hGetLine h)
-  pure $ case l of
-    Left _ -> Nothing
-    Right a -> bool (Just a) Nothing (a == "")
-
 -- | emits parsed csv rows
 rowEmitter :: CsvConfig -> (Char -> A.Parser a) -> Cont IO (Emitter IO (Either Text a))
-rowEmitter cfg p = Cont $ \eio -> withFile (file cfg) ReadMode (\h -> eio (eParse (p (cfg ^. #csep)) $ fileLines h))
+rowEmitter cfg p = eParse (p (view #csep cfg)) <$> fileEmitter (file cfg)
+
+-- | emits parsed csv rows
+-- rowCommitter :: CsvConfig -> Cont IO (Committer IO [Text])
+rowCommitter :: CsvConfig -> (a -> [Text]) -> Cont IO (Committer IO a)
+rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #csep cfg) . f) <$> fileCommitter (file cfg)
 
 -- | Run a parser across all lines of a file.
 --
@@ -159,5 +154,5 @@ doubles c = A.double `A.sepBy1` sep c
 -- >>> A.parseOnly (ints ',') "1,2,3"
 -- Right [1,2,3]
 ints :: Char -> A.Parser [Int]
-ints c = (A.signed A.decimal) `A.sepBy1` sep c
+ints c = A.signed A.decimal `A.sepBy1` sep c
 
