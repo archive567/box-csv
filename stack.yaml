@@ -6,8 +6,10 @@ packages:
 extra-deps:
   - protolude-0.3.0
   - numhask-prelude-0.5.0
-  - box-0.4.0
   - text-format-0.3.2
+  # - box-0.4.0
+  - git: https://github.com/tonyday567/box
+    commit: 09972505729cd4f23f1abbf8a62ef2bd87a5c38f
 
 allow-newer: true
 

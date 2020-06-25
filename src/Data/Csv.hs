@@ -121,14 +121,13 @@ sep c = void (A.char c)
 -- >>> A.parse (field ',') "field,ok"
 -- Done ",ok" "field"
 field :: Char -> A.Parser Text
-field c = A.takeWhile (`notElem` [c])
+field c = A.takeWhile (/=c)
 
 -- | skipping a field
 -- >>> A.parse (skipField ',') "field,ok"
 -- Done ",ok" ()
 skipField :: Char -> A.Parser ()
-skipField c = A.skipWhile (`notElem` [c])
-
+skipField c = A.skipWhile (/= c)
 
 -- * Block list parsers
 
