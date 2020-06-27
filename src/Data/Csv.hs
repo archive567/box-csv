@@ -9,10 +9,10 @@
 --
 -- csv data type
 module Data.Csv
-  ( CsvConfig(..),
+  ( CsvConfig (..),
     defaultCsvConfig,
     file,
-    Header(..),
+    Header (..),
     rowEmitter,
     rowCommitter,
     runCsv,
@@ -23,15 +23,16 @@ module Data.Csv
     scis,
     doubles,
     ints,
-  ) where
+  )
+where
 
 import Box
 import Control.Lens
 import qualified Data.Attoparsec.Text as A
 import Data.Generics.Labels ()
+import Data.Scientific
 import qualified Data.Text as Text
 import NumHask.Prelude
-import Data.Scientific
 
 data CsvConfig
   = CsvConfig
@@ -65,7 +66,7 @@ file cfg =
     <> "/"
     <> cfg ^. #name
     <> cfg ^. #suffix
-      & Text.unpack
+      & unpack
 
 -- | does the csv have a header row?
 data Header = HasHeader | NoHeader deriving (Show, Eq)
@@ -121,7 +122,7 @@ sep c = void (A.char c)
 -- >>> A.parse (field ',') "field,ok"
 -- Done ",ok" "field"
 field :: Char -> A.Parser Text
-field c = A.takeWhile (/=c)
+field c = A.takeWhile (/= c)
 
 -- | skipping a field
 -- >>> A.parse (skipField ',') "field,ok"
@@ -154,4 +155,3 @@ doubles c = A.double `A.sepBy1` sep c
 -- Right [1,2,3]
 ints :: Char -> A.Parser [Int]
 ints c = A.signed A.decimal `A.sepBy1` sep c
-

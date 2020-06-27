@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 2.4
 name: online-csv
 version: 0.0.1
 synopsis: See readme.md
@@ -30,16 +30,15 @@ library
     -Wincomplete-uni-patterns
     -Wredundant-constraints
   build-depends:
-    base >=4.7 && <5
-    , attoparsec
-    , box >= 0.4 && < 0.5
-    , foldl
-    , generic-lens
-    , lens
-    , text
-    , scientific
-    , text-format
-    , numhask-prelude >= 0.5 && < 0.6
+    base >=4.7 && <5,
+    attoparsec >= 0.13,
+    box >= 0.4 && < 0.6,
+    foldl >= 1.4,
+    generic-lens,
+    lens >= 4.19,
+    text >= 1.2,
+    scientific >= 0.3,
+    numhask-prelude >= 0.6
   exposed-modules:
     Data.Csv
   other-modules:
@@ -62,7 +61,7 @@ test-suite test
     -Wincomplete-uni-patterns
     -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
-    , doctest
-    , numhask-prelude >= 0.5 && < 0.6
+    base >=4.7 && <5,
+    doctest >= 0.16,
+    numhask-prelude >= 0.6
   default-language: Haskell2010

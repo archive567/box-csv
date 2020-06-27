@@ -1,15 +1,19 @@
-resolver: lts-15.13
+resolver: nightly-2020-06-25
 
 packages:
   - .
 
 extra-deps:
-  - protolude-0.3.0
-  - numhask-prelude-0.5.0
-  - text-format-0.3.2
-  # - box-0.4.0
+  - git: https://github.com/tonyday567/numhask-space
+    commit: 6525f5096525196fe367dabdfe596a7bd0c0aa6c
+  - git: https://github.com/tonyday567/numhask
+    commit: 37ee8dced120f60a511baa6bb6c7ac382b1e8827
+    subdir: numhask-prelude
+  - git: https://github.com/tonyday567/numhask
+    commit: 37ee8dced120f60a511baa6bb6c7ac382b1e8827
+    subdir: numhask
   - git: https://github.com/tonyday567/box
-    commit: 09972505729cd4f23f1abbf8a62ef2bd87a5c38f
+    commit: d496d333524d5a64a799dd390f4cc98b0d35bb67
 
 allow-newer: true
 
