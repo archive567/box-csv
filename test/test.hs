@@ -15,5 +15,5 @@ import Test.DocTest
 main :: IO ()
 main =
   doctest
-    [ "src/Data/Csv.hs"
+    [ "src/Box/Csv.hs"
     ]

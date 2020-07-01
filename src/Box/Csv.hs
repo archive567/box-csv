@@ -5,10 +5,9 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
--- |
+-- | A csv process based on attoparsec and the box library
 --
--- csv data type
-module Data.Csv
+module Box.Csv
   ( CsvConfig (..),
     defaultCsvConfig,
     file,
