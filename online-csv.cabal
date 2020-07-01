@@ -37,6 +37,7 @@ library
     generic-lens,
     lens >= 4.19,
     text >= 1.2,
+    time >= 1.9,
     scientific >= 0.3,
     numhask-prelude >= 0.6
   exposed-modules:
