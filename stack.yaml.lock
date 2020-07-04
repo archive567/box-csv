@@ -47,11 +47,11 @@ packages:
     git: https://github.com/tonyday567/box
     pantry-tree:
       size: 1548
-      sha256: 72c80845dbdb92c0490acef73ced0b2259ad28a9ad25c17e40f14ec6ef02256a
-    commit: d496d333524d5a64a799dd390f4cc98b0d35bb67
+      sha256: 67fdec8ffff5a640b0dfb3f10c4e95a08c9d2d6f4b62c348448fc2217d2896ba
+    commit: 8d2351397d99f016e842876d8811904b0ab3ae3d
   original:
     git: https://github.com/tonyday567/box
-    commit: d496d333524d5a64a799dd390f4cc98b0d35bb67
+    commit: 8d2351397d99f016e842876d8811904b0ab3ae3d
 snapshots:
 - completed:
     size: 503181

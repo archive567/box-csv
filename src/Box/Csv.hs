@@ -121,7 +121,7 @@ rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cf
 -- >>> take 2 $ drop 2 [x | (Right x) <- r1]
 -- [["","Afghanistan","33.0","65.0","2020-06-29","733","AFG","142","34","\r"],["","Afghanistan","33.0","65.0","2020-06-28","721","AFG","142","34","\r"]]
 runCsv :: CsvConfig -> (Char -> A.Parser a) -> IO [Either Text a]
-runCsv cfg p = toListE (rowEmitter cfg p)
+runCsv cfg p = with (rowEmitter cfg p) toListE
 
 -- * low-level generic csv parser helpers
 
