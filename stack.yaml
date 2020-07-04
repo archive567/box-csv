@@ -13,7 +13,7 @@ extra-deps:
     commit: 37ee8dced120f60a511baa6bb6c7ac382b1e8827
     subdir: numhask
   - git: https://github.com/tonyday567/box
-    commit: d496d333524d5a64a799dd390f4cc98b0d35bb67
+    commit: 8d2351397d99f016e842876d8811904b0ab3ae3d
 
 allow-newer: true
 
