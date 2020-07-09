@@ -94,7 +94,7 @@ data Header = HasHeader | HasHXL | NoHeader deriving (Show, Eq)
 -- >>> rowEmitter defaultCsvConfig fields `with` emit
 -- Just (Right ["Province/State","Country/Region","Lat","Long","Date","Value","ISO 3166-1 Alpha 3-Codes","Region Code","Sub-region Code","Intermediate Region Code\r"])
 rowEmitter :: CsvConfig -> (Char -> A.Parser a) -> Cont IO (Emitter IO (Either Text a))
-rowEmitter cfg p = eParse (p (view #fsep cfg)) <$> fileEmitter (file cfg)
+rowEmitter cfg p = parseE (p (view #fsep cfg)) <$> fileE (file cfg)
 
 -- | commits printed csv rows
 --
@@ -107,7 +107,7 @@ rowEmitter cfg p = eParse (p (view #fsep cfg)) <$> fileEmitter (file cfg)
 -- Just (Right [1,2,3,4,5,6,7,8,9,10])
 --
 rowCommitter :: CsvConfig -> (a -> [Text]) -> Cont IO (Committer IO a)
-rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cfg) . f) <$> fileCommitter (file cfg)
+rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cfg) . f) <$> fileWriteC (file cfg)
 
 -- | Run a parser across all lines of a file.
 --
