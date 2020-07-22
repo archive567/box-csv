@@ -30,16 +30,16 @@ library
     -Wincomplete-uni-patterns
     -Wredundant-constraints
   build-depends:
-    base >=4.7 && <5,
     attoparsec >= 0.13,
+    base >=4.7 && <5,
     box >= 0.4 && < 0.6,
     foldl >= 1.4,
     generic-lens,
     lens >= 4.19,
+    numhask >= 0.6,
+    scientific >= 0.3,
     text >= 1.2,
     time >= 1.9,
-    scientific >= 0.3,
-    numhask >= 0.6
   exposed-modules:
     Box.Csv
   other-modules:

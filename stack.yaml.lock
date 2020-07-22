@@ -12,12 +12,16 @@ packages:
   original:
     hackage: numhask-0.6.0
 - completed:
-    hackage: box-0.5.0@sha256:136cb3aec70434c787938caeda664169803d89c19bc78623340a85253f68c1fc,3358
+    name: box
+    version: 0.5.0
+    git: https://github.com/tonyday567/box
     pantry-tree:
-      size: 951
-      sha256: 4f456e572f83c16d4a387bb2323ac010cc32c09b9bb72a4015643c8567c200ba
+      size: 1350
+      sha256: 039f9c7eebba11f9b3842dcb3918122ecb93fbd6580f68affb7399ccb31c0fbf
+    commit: f4f700337993c8dc4b6e867c6a498f26c8843dde
   original:
-    hackage: box-0.5.0
+    git: https://github.com/tonyday567/box
+    commit: f4f700337993c8dc4b6e867c6a498f26c8843dde
 snapshots:
 - completed:
     size: 503181

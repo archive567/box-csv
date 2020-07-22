@@ -30,6 +30,9 @@ module Box.Csv
     scis,
     ints,
     doubles,
+    day',
+    tod',
+    localtime',
   )
 where
 
@@ -40,6 +43,7 @@ import Data.Generics.Labels ()
 import Data.Scientific
 import qualified Data.Text as Text
 import NumHask.Prelude
+import Data.Time
 
 -- $setup
 -- >>> :set -XOverloadedStrings
@@ -185,6 +189,39 @@ int' c = A.decimal <* A.char c
 double' :: Char -> A.Parser Double
 double' c = A.double <* A.char c
 
+-- | Day parser, consumes separator
+--
+-- >>> A.parse (day' ',') "2020-07-01,ok"
+-- Done "ok" 2020-07-01
+day' :: Char -> A.Parser Day
+day' c = do
+  d <- A.takeTill (== c)
+  d' <- parseTimeM False defaultTimeLocale "%F" (unpack d)
+  _ <- A.char c
+  pure d'
+
+-- | TimeOfDay parser, consumes separator
+--
+-- >>> A.parse (tod' ',') "23:52:05.221109,ok"
+-- Done "ok" 23:52:05.221109
+tod' :: Char -> A.Parser TimeOfDay
+tod' c = do
+  d <- A.takeTill (== c)
+  d' <- parseTimeM False defaultTimeLocale "%T%Q" (unpack d)
+  _ <- A.char c
+  pure d'
+
+-- | TimeOfDay parser, consumes separator
+--
+-- >>> A.parse (localtime' ',') "Jun 24 8:24AM,ok"
+-- Done "ok" 2020-06-24 08:24:00
+localtime' :: Char -> A.Parser LocalTime
+localtime' c = do
+  d <- A.takeTill (== c)
+  d' <- parseTimeM False defaultTimeLocale "%Y %b %e %k:%M%p" (unpack ("2020 " <> d))
+  _ <- A.char c
+  pure d'
+
 -- * Block list parsers
 -- | Parser for a csv row of [Text].
 -- TODO: deal with potential for an extra '\r'
@@ -194,7 +231,7 @@ double' c = A.double <* A.char c
 --
 fields :: Char -> A.Parser [Text]
 fields c =
-  field_ c `A.sepBy1` (sep c)
+  field_ c `A.sepBy1` sep c
 
 -- | parser for a csv row of [Scientific]
 --
