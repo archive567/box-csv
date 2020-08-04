@@ -1,6 +1,6 @@
 cabal-version: 2.4
 name: box-csv
-version: 0.0.1
+version: 0.0.2
 synopsis: See readme.md
 description: See readme.md for description.
 category: project
@@ -32,11 +32,10 @@ library
   build-depends:
     attoparsec >= 0.13,
     base >=4.7 && <5,
-    box >= 0.4 && < 0.6,
-    foldl >= 1.4,
+    box >= 0.6 && < 0.7,
     generic-lens,
     lens >= 4.19,
-    numhask >= 0.6,
+    numhask >= 0.6 && < 0.7,
     scientific >= 0.3,
     text >= 1.2,
     time >= 1.9,
@@ -64,5 +63,5 @@ test-suite test
   build-depends:
     base >=4.7 && <5,
     doctest >= 0.16,
-    numhask >= 0.6
+    numhask >= 0.6 && < 0.7
   default-language: Haskell2010
