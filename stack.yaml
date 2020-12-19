@@ -9,7 +9,7 @@ extra-deps:
   - random-1.2.0
   - splitmix-0.1.0.3
   - numhask-space-0.7.0.0
-  - box-0.6.1
+  - box-0.6.2
 
 allow-newer: true
 
