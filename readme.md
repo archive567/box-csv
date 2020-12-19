@@ -7,5 +7,5 @@ flow
 ----
 
 ```
-stack build --test --exec "$(stack path --local-install-root)/bin/box-csv" --file-watch
+stack build --test --file-watch
 ```
