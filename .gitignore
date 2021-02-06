@@ -4,3 +4,4 @@ TAGS
 /.DS_Store
 */.DS_Store
 /.hie/
+/stack.yaml.lock
