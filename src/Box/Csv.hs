@@ -3,7 +3,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE StrictData #-}
 
 -- | A csv process based on attoparsec and the box library
@@ -40,14 +39,20 @@ where
 import Box
 import Control.Lens
 import qualified Data.Attoparsec.Text as A
-import Data.Generics.Labels ()
 import Data.Scientific
 import qualified Data.Text as Text
-import NumHask.Prelude
+import Data.Text (Text, unpack)
 import Data.Time
+import Data.Generics.Labels ()
+import GHC.Generics
+import Control.Monad
 
 -- $setup
 -- >>> :set -XOverloadedStrings
+-- >>> import Box
+-- >>> import Box.Csv
+-- >>> import qualified Data.Text as Text
+-- >>> import qualified Data.Attoparsec.Text as A
 
 -- | csv file configuration
 data CsvConfig
@@ -104,7 +109,7 @@ rowEmitter cfg p = parseE (p (view #fsep cfg)) <$> fileE (file cfg)
 -- | commits printed csv rows
 --
 -- >>> let testConfig = CsvConfig "test" ".csv" "./test" ',' NoHeader
--- >>> let ctest = rowCommitter testConfig (fmap (Text.intercalate "," . fmap show))
+-- >>> let ctest = rowCommitter testConfig (fmap (Text.intercalate "," . fmap (Text.pack . show)))
 -- >>> ctest `with` (\c -> commit c [[1..10::Int]])
 -- True
 --
