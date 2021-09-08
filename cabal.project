@@ -1,3 +1,4 @@
 packages:
   box-csv.cabal
-  ../box/box.cabal
+
+allow-newer: attoparsec

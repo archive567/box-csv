@@ -2,11 +2,10 @@
 {-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE StrictData #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- | A csv process based on attoparsec and the box library
---
 module Box.Csv
   ( CsvConfig (..),
     defaultCsvConfig,
@@ -38,14 +37,14 @@ where
 
 import Box
 import Control.Lens
-import qualified Data.Attoparsec.Text as A
-import Data.Scientific
-import qualified Data.Text as Text
-import Data.Text (Text, unpack)
-import Data.Time
-import Data.Generics.Labels ()
-import GHC.Generics
 import Control.Monad
+import qualified Data.Attoparsec.Text as A
+import Data.Generics.Labels ()
+import Data.Scientific
+import Data.Text (Text, unpack)
+import qualified Data.Text as Text
+import Data.Time
+import GHC.Generics
 
 -- $setup
 -- >>> :set -XOverloadedStrings
@@ -55,19 +54,18 @@ import Control.Monad
 -- >>> import qualified Data.Attoparsec.Text as A
 
 -- | csv file configuration
-data CsvConfig
-  = CsvConfig
-      { -- | file name stem
-        name :: Text,
-        -- | file suffix
-        suffix :: Text,
-        -- | directory
-        dir :: Text,
-        -- | field separator
-        fsep :: Char,
-        -- | nature of header row(s)
-        header :: Header
-      }
+data CsvConfig = CsvConfig
+  { -- | file name stem
+    name :: Text,
+    -- | file suffix
+    suffix :: Text,
+    -- | directory
+    dir :: Text,
+    -- | field separator
+    fsep :: Char,
+    -- | nature of header row(s)
+    header :: Header
+  }
   deriving (Show, Generic, Eq)
 
 -- | default csv file details
@@ -110,12 +108,13 @@ rowEmitter cfg p = parseE (p (view #fsep cfg)) <$> fileE (file cfg)
 --
 -- >>> let testConfig = CsvConfig "test" ".csv" "./test" ',' NoHeader
 -- >>> let ctest = rowCommitter testConfig (fmap (Text.intercalate "," . fmap (Text.pack . show)))
--- >>> ctest `with` (\c -> commit c [[1..10::Int]])
+--
+-- FIXME: fails if used outside this project.
+-- > ctest `with` (\c -> commit c [[1..10::Int]])
 -- True
 --
--- >>> rowEmitter testConfig ints `with` emit
+-- > rowEmitter testConfig ints `with` emit
 -- Just (Right [1,2,3,4,5,6,7,8,9,10])
---
 rowCommitter :: CsvConfig -> (a -> [Text]) -> Cont IO (Committer IO a)
 rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cfg) . f) <$> fileWriteC (file cfg)
 
@@ -229,12 +228,12 @@ localtime' c = do
   pure d'
 
 -- * Block list parsers
+
 -- | Parser for a csv row of [Text].
 -- TODO: deal with potential for an extra '\r'
 --
 -- >>> A.parseOnly (fields ',') "field1,field2\r"
 -- Right ["field1","field2\r"]
---
 fields :: Char -> A.Parser [Text]
 fields c =
   field_ c `A.sepBy1` sep c
