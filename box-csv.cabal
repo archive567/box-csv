@@ -1,8 +1,8 @@
 cabal-version: 2.4
 name:          box-csv
-version:       0.0.3
-synopsis:      See readme.md
-description:   See readme.md for description.
+version:       0.1.0
+synopsis:      CSV parsing in a box.
+description:   CSV parsing using attoparsec and the box library.
 category:      project
 author:        Tony Day
 maintainer:    tonyday567@gmail.com
