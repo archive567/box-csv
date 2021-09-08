@@ -6,3 +6,4 @@ TAGS
 /.hie/
 /stack.yaml.lock
 /cabal.project.local*
+/.hkgr/
