@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StrictData #-}
@@ -9,7 +8,6 @@
 module Box.Csv
   ( CsvConfig (..),
     defaultCsvConfig,
-    file,
     Header (..),
     rowEmitter,
     rowCommitter,
@@ -26,7 +24,6 @@ module Box.Csv
     A.double,
     double',
     fields,
-    scis,
     ints,
     doubles,
     day',
@@ -36,11 +33,9 @@ module Box.Csv
 where
 
 import Box
-import Control.Lens
 import Control.Monad
 import qualified Data.Attoparsec.Text as A
-import Data.Generics.Labels ()
-import Data.Scientific
+import Data.Functor.Contravariant
 import Data.Text (Text, unpack)
 import qualified Data.Text as Text
 import Data.Time
@@ -55,12 +50,8 @@ import GHC.Generics
 
 -- | csv file configuration
 data CsvConfig = CsvConfig
-  { -- | file name stem
-    name :: Text,
-    -- | file suffix
-    suffix :: Text,
-    -- | directory
-    dir :: Text,
+  { -- | file name
+    file :: FilePath,
     -- | field separator
     fsep :: Char,
     -- | nature of header row(s)
@@ -71,52 +62,41 @@ data CsvConfig = CsvConfig
 -- | default csv file details
 --
 -- >>> defaultCsvConfig
--- CsvConfig {name = "time_series_covid19_deaths_global_narrow", suffix = ".csv", dir = "./other", fsep = ',', header = HasHXL}
+-- CsvConfig {file = "./other/time_series_covid19_deaths_global_narrow.csv", fsep = ',', header = HasHXL}
 --
 -- test data from https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases
 defaultCsvConfig :: CsvConfig
 defaultCsvConfig =
   CsvConfig
-    "time_series_covid19_deaths_global_narrow"
-    ".csv"
-    "./other"
+    "./other/time_series_covid19_deaths_global_narrow.csv"
     ','
     HasHXL
-
--- | filepath for the config.
---
--- >>> file defaultCsvConfig
--- "./other/time_series_covid19_deaths_global_narrow.csv"
-file :: CsvConfig -> FilePath
-file cfg =
-  cfg ^. #dir
-    <> "/"
-    <> cfg ^. #name
-    <> cfg ^. #suffix
-      & unpack
 
 -- | Type of header rows.  Note the modern propensity for multiple header rows.
 data Header = HasHeader | HasHXL | NoHeader deriving (Show, Eq)
 
+-- | attoparsec parse emitter which returns the original text on failure
+parseE :: (Functor m) => A.Parser a -> Emitter m Text -> Emitter m (Either Text a)
+parseE parser e = (\t -> either (const $ Left t) Right (A.parseOnly parser t)) <$> e
+
 -- | A continuation emitter of parsed csv rows from a CsvConfig, returning the original text on failure
--- >>> rowEmitter defaultCsvConfig fields `with` emit
+-- >>> emit <$|> rowEmitter defaultCsvConfig fields
 -- Just (Right ["Province/State","Country/Region","Lat","Long","Date","Value","ISO 3166-1 Alpha 3-Codes","Region Code","Sub-region Code","Intermediate Region Code\r"])
-rowEmitter :: CsvConfig -> (Char -> A.Parser a) -> Cont IO (Emitter IO (Either Text a))
-rowEmitter cfg p = parseE (p (view #fsep cfg)) <$> fileE (file cfg)
+rowEmitter :: CsvConfig -> (Char -> A.Parser a) -> CoEmitter IO (Either Text a)
+rowEmitter cfg p = parseE (p (fsep cfg)) <$> fileE (file cfg)
 
 -- | commits printed csv rows
 --
--- >>> let testConfig = CsvConfig "test" ".csv" "./test" ',' NoHeader
+-- >>> let testConfig = CsvConfig "./test/test.csv" ',' NoHeader
 -- >>> let ctest = rowCommitter testConfig (fmap (Text.intercalate "," . fmap (Text.pack . show)))
 --
--- FIXME: fails if used outside this project.
--- > ctest `with` (\c -> commit c [[1..10::Int]])
+-- >>> (\c -> commit c [[1..10::Int]]) <$|> ctest
 -- True
 --
--- > rowEmitter testConfig ints `with` emit
+-- >>> emit <$|> rowEmitter testConfig ints
 -- Just (Right [1,2,3,4,5,6,7,8,9,10])
-rowCommitter :: CsvConfig -> (a -> [Text]) -> Cont IO (Committer IO a)
-rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cfg) . f) <$> fileWriteC (file cfg)
+rowCommitter :: CsvConfig -> (a -> [Text]) -> CoCommitter IO a
+rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ fsep cfg) . f) <$> fileWriteC (file cfg)
 
 -- | Run a parser across all lines of a file.
 --
@@ -130,7 +110,7 @@ rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ view #fsep cf
 -- >>> take 2 $ drop 2 [x | (Right x) <- r1]
 -- [["","Afghanistan","33.0","65.0","2020-06-29","733","AFG","142","34","\r"],["","Afghanistan","33.0","65.0","2020-06-28","721","AFG","142","34","\r"]]
 runCsv :: CsvConfig -> (Char -> A.Parser a) -> IO [Either Text a]
-runCsv cfg p = with (rowEmitter cfg p) toListE
+runCsv cfg p = toListM <$|> rowEmitter cfg p
 
 -- * low-level generic csv parser helpers
 
@@ -230,20 +210,12 @@ localtime' c = do
 -- * Block list parsers
 
 -- | Parser for a csv row of [Text].
--- TODO: deal with potential for an extra '\r'
 --
 -- >>> A.parseOnly (fields ',') "field1,field2\r"
 -- Right ["field1","field2\r"]
 fields :: Char -> A.Parser [Text]
 fields c =
   field_ c `A.sepBy1` sep c
-
--- | parser for a csv row of [Scientific]
---
--- >>> A.parseOnly (scis ',') "1,2.2,3.3"
--- Right [1.0,2.2,3.3]
-scis :: Char -> A.Parser [Scientific]
-scis c = A.scientific `A.sepBy1` sep c
 
 -- | parser for a csv row of [Double]
 --
