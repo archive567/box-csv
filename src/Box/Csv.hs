@@ -40,6 +40,7 @@ import Data.Text (Text, unpack)
 import qualified Data.Text as Text
 import Data.Time
 import GHC.Generics
+import System.IO
 
 -- $setup
 -- >>> :set -XOverloadedStrings
@@ -83,7 +84,7 @@ parseE parser e = (\t -> either (const $ Left t) Right (A.parseOnly parser t)) <
 -- >>> emit <$|> rowEmitter defaultCsvConfig fields
 -- Just (Right ["Province/State","Country/Region","Lat","Long","Date","Value","ISO 3166-1 Alpha 3-Codes","Region Code","Sub-region Code","Intermediate Region Code\r"])
 rowEmitter :: CsvConfig -> (Char -> A.Parser a) -> CoEmitter IO (Either Text a)
-rowEmitter cfg p = parseE (p (fsep cfg)) <$> fileE (file cfg)
+rowEmitter cfg p = parseE (p (fsep cfg)) <$> fileEText (file cfg) LineBuffering
 
 -- | commits printed csv rows
 --
@@ -96,7 +97,7 @@ rowEmitter cfg p = parseE (p (fsep cfg)) <$> fileE (file cfg)
 -- >>> emit <$|> rowEmitter testConfig ints
 -- Just (Right [1,2,3,4,5,6,7,8,9,10])
 rowCommitter :: CsvConfig -> (a -> [Text]) -> CoCommitter IO a
-rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ fsep cfg) . f) <$> fileWriteC (file cfg)
+rowCommitter cfg f = contramap (Text.intercalate (Text.singleton $ fsep cfg) . f) <$> fileCText (file cfg) LineBuffering WriteMode
 
 -- | Run a parser across all lines of a file.
 --
